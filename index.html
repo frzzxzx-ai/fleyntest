@@ -2,47 +2,57 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ZVORNIXUP · РАКЕТА</title>
     
     <!-- Telegram WebApp -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
+        /* ГЛОБАЛЬНЫЙ СБРОС И ЗАЩИТА ОТ ВЫЛЕЗАНИЯ */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden; /* ← ЗАПРЕЩАЕТ ГОРИЗОНТАЛЬНЫЙ СКРОЛЛ */
+            background: #0b0e1a;
+            position: relative;
         }
 
         body {
-            background: #0b0e1a;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 12px;
+            padding: 8px; /* Чуть меньше отступы по бокам */
         }
 
         .app {
             max-width: 440px;
             width: 100%;
             background: #121624;
-            border-radius: 36px;
-            padding: 24px;
+            border-radius: 32px; /* Чуть меньше для телефона */
+            padding: 16px; /* Уменьшил внутренние отступы */
             box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            margin: 0 auto; /* Центрирование */
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
         }
 
         .logo {
-            font-size: 24px;
+            font-size: 22px; /* Чуть меньше */
             font-weight: 600;
             color: #ffffff;
             letter-spacing: -0.3px;
@@ -55,16 +65,17 @@
 
         .profile {
             background: #1e2330;
-            padding: 6px 12px 6px 6px;
+            padding: 4px 10px 4px 4px; /* Уменьшил */
             border-radius: 40px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            max-width: 60%; /* Ограничиваем ширину */
         }
 
         .avatar {
-            width: 32px;
-            height: 32px;
+            width: 28px; /* Уменьшил */
+            height: 28px;
             background: #3b82f6;
             border-radius: 50%;
             display: flex;
@@ -72,51 +83,57 @@
             justify-content: center;
             color: white;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 12px; /* Уменьшил */
+            flex-shrink: 0;
         }
 
         .username {
             color: #fff;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 13px; /* Уменьшил */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 80px; /* Чтобы не вылезало */
         }
 
         .user-id {
             background: #262d3c;
-            padding: 4px 8px;
+            padding: 3px 6px; /* Уменьшил */
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 10px; /* Уменьшил */
             color: #8e9bb3;
-            margin-left: 8px;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .balance-card {
             background: #1e2330;
             border-radius: 24px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 16px; /* Уменьшил */
+            margin-bottom: 16px;
         }
 
         .balance-row {
             display: flex;
             align-items: baseline;
             justify-content: space-between;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .balance-label {
             color: #8e9bb3;
-            font-size: 15px;
+            font-size: 14px;
         }
 
         .balance-number {
-            font-size: 32px;
+            font-size: 28px; /* Уменьшил */
             font-weight: 600;
             color: white;
         }
 
         .balance-number small {
-            font-size: 14px;
+            font-size: 12px; /* Уменьшил */
             font-weight: 400;
             color: #5f6b84;
             margin-left: 4px;
@@ -124,22 +141,23 @@
 
         .action-buttons {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 8px; /* Уменьшил */
+            margin-top: 8px;
         }
 
         .action-btn {
             flex: 1;
-            padding: 14px;
+            padding: 12px; /* Уменьшил */
             border: none;
             border-radius: 40px;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 15px; /* Уменьшил */
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
+            white-space: nowrap;
         }
 
         .deposit-btn {
@@ -177,9 +195,9 @@
 
         .modal-content {
             background: #1e2330;
-            border-radius: 36px;
-            padding: 30px;
-            max-width: 360px;
+            border-radius: 32px;
+            padding: 24px;
+            max-width: 340px;
             width: 90%;
             text-align: center;
             border: 1px solid #3b82f6;
@@ -187,19 +205,19 @@
 
         .modal-title {
             color: #3b82f6;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .wallet-address {
             background: #0b0e1a;
-            border-radius: 20px;
-            padding: 16px;
-            font-size: 14px;
+            border-radius: 16px;
+            padding: 14px;
+            font-size: 13px;
             color: #3b82f6;
             word-break: break-all;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             border: 1px solid #3b82f6;
             font-family: monospace;
         }
@@ -209,17 +227,17 @@
             color: white;
             border: none;
             border-radius: 40px;
-            padding: 14px 20px;
+            padding: 12px 16px;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .support-link {
             color: #8e9bb3;
-            font-size: 14px;
-            margin-bottom: 15px;
+            font-size: 13px;
+            margin-bottom: 12px;
         }
 
         .support-link a {
@@ -233,7 +251,7 @@
             border: 1px solid #5f6b84;
             color: #8e9bb3;
             border-radius: 40px;
-            padding: 12px;
+            padding: 10px;
             cursor: pointer;
             width: 100%;
         }
@@ -242,8 +260,8 @@
             background: #1e1a2a;
             border: 1px solid #ef4444;
             border-radius: 24px;
-            padding: 20px;
-            margin-top: 20px;
+            padding: 16px;
+            margin-top: 16px;
             display: none;
         }
 
@@ -254,18 +272,18 @@
         .admin-title {
             color: #ef4444;
             font-weight: 700;
-            margin-bottom: 15px;
-            font-size: 18px;
+            margin-bottom: 12px;
+            font-size: 16px;
         }
 
         .admin-input-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .admin-label {
             color: #8e9bb3;
-            font-size: 13px;
-            margin-bottom: 5px;
+            font-size: 12px;
+            margin-bottom: 4px;
         }
 
         .admin-input {
@@ -273,27 +291,28 @@
             background: #262d3c;
             border: 1px solid #ef4444;
             border-radius: 30px;
-            padding: 14px 16px;
+            padding: 12px 14px;
             color: white;
-            font-size: 16px;
+            font-size: 15px;
             outline: none;
         }
 
         .admin-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 8px;
+            margin-top: 12px;
         }
 
         .admin-btn {
-            padding: 14px;
+            padding: 12px;
             border: 1px solid #ef4444;
             border-radius: 30px;
             background: transparent;
             color: #ef4444;
             font-weight: 600;
             cursor: pointer;
+            font-size: 13px;
         }
 
         .admin-btn.primary {
@@ -310,9 +329,9 @@
         .promo {
             background: #1a1e2a;
             border-radius: 30px;
-            padding: 6px 6px 6px 16px;
+            padding: 4px 4px 4px 12px;
             display: flex;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             border: 1px solid #262d3c;
         }
 
@@ -321,8 +340,9 @@
             background: transparent;
             border: none;
             color: white;
-            font-size: 14px;
+            font-size: 13px;
             outline: none;
+            min-width: 0;
         }
 
         .promo input::placeholder {
@@ -333,25 +353,27 @@
             background: #3b82f6;
             border: none;
             color: white;
-            padding: 10px 20px;
+            padding: 8px 14px;
             border-radius: 30px;
             font-weight: 600;
             cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
         }
 
         .bets-panel {
             background: #1a1e2a;
-            border-radius: 24px;
-            padding: 16px;
-            margin-bottom: 20px;
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 16px;
         }
 
         .bets-header {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
             color: #5f6b84;
-            font-size: 12px;
-            padding: 0 4px 8px 4px;
+            font-size: 11px;
+            padding: 0 4px 6px 4px;
             border-bottom: 1px solid #262d3c;
         }
 
@@ -359,9 +381,9 @@
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
             align-items: center;
-            padding: 10px 4px;
+            padding: 8px 4px;
             border-bottom: 1px solid #262d3c;
-            font-size: 14px;
+            font-size: 13px;
             color: #f0f4ff;
         }
 
@@ -371,45 +393,46 @@
 
         .bet-row.you {
             background: #262d3c;
-            border-radius: 12px;
-            margin: 6px 0;
-            padding: 10px 8px;
+            border-radius: 10px;
+            margin: 5px 0;
+            padding: 8px 8px;
         }
 
         .game {
             background: #1e2330;
-            border-radius: 32px;
-            padding: 24px;
-            margin-bottom: 20px;
+            border-radius: 28px;
+            padding: 16px;
+            margin-bottom: 16px;
             text-align: center;
         }
 
         .rocket {
-            font-size: 80px;
-            margin: 10px 0;
+            font-size: 70px;
+            margin: 5px 0;
             transition: transform 0.1s;
+            line-height: 1;
         }
 
         .multiplier {
-            font-size: 56px;
+            font-size: 48px;
             font-weight: 700;
             color: white;
-            margin: 15px 0 5px;
+            margin: 10px 0 5px;
             letter-spacing: -1px;
         }
 
         .status {
             color: #5f6b84;
-            font-size: 14px;
-            min-height: 24px;
-            margin-bottom: 20px;
+            font-size: 13px;
+            min-height: 20px;
+            margin-bottom: 15px;
         }
 
         .timer {
             color: #3b82f6;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .bet-field {
@@ -417,19 +440,20 @@
             align-items: center;
             background: #262d3c;
             border-radius: 40px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .bet-field input {
             flex: 1;
             background: transparent;
             border: none;
-            padding: 16px;
-            font-size: 20px;
+            padding: 14px;
+            font-size: 18px;
             font-weight: 600;
             color: white;
             outline: none;
             text-align: center;
+            min-width: 0;
         }
 
         .bet-field input:disabled {
@@ -438,17 +462,19 @@
         }
 
         .bet-field span {
-            padding-right: 20px;
+            padding-right: 16px;
             color: #5f6b84;
             font-weight: 500;
+            font-size: 14px;
+            white-space: nowrap;
         }
 
         .action {
             width: 100%;
-            padding: 18px;
+            padding: 16px;
             border: none;
             border-radius: 40px;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
             cursor: pointer;
             transition: opacity 0.2s;
@@ -476,21 +502,27 @@
 
         .toast {
             position: fixed;
-            top: 20px;
+            top: 15px;
             left: 50%;
             transform: translateX(-50%);
             background: #1e2330;
             color: white;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 40px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             z-index: 3000;
             display: none;
             border: 1px solid #3b82f6;
+            font-size: 13px;
+            white-space: nowrap;
+            max-width: 90%;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
     </style>
 </head>
 <body>
+    <!-- Весь твой HTML остается БЕЗ ИЗМЕНЕНИЙ -->
     <div class="toast" id="toast"></div>
 
     <!-- МОДАЛЬНОЕ ОКНО С КОШЕЛЬКОМ -->
@@ -586,6 +618,7 @@
         </div>
     </div>
 
+    <!-- Весь твой JavaScript БЕЗ ИЗМЕНЕНИЙ -->
     <script>
         // ===== ТВОИ ДАННЫЕ =====
         const YOUR_WALLET = "UQCHds7zJ_3SHZfineeyPoem83eKy48MbvdW2Ok1tTNSECUp";
