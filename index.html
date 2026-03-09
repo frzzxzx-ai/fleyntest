@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZVORNIXUP · РАКЕТА</title>
+    
+    <!-- Telegram WebApp -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #0b0e1a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+        }
+
+        .app {
+            max-width: 440px;
+            width: 100%;
+            background: #121624;
+            border-radius: 36px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .logo span {
+            color: #3b82f6;
+            margin-right: 4px;
+        }
+
+        .profile {
+            background: #1e2330;
+            padding: 6px 12px 6px 6px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .username {
+            color: #fff;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .user-id {
+            background: #262d3c;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #8e9bb3;
+            margin-left: 8px;
+        }
+
+        .balance-card {
+            background: #1e2330;
+            border-radius: 24px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .balance-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .balance-label {
+            color: #8e9bb3;
+            font-size: 15px;
+        }
+
+        .balance-number {
+            font-size: 32px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .balance-number small {
+            font-size: 14px;
+            font-weight: 400;
+            color: #5f6b84;
+            margin-left: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .deposit-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .withdraw-btn {
+            background: #22c55e;
+            color: white;
+        }
+
+        .withdraw-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1e2330;
+            border-radius: 36px;
+            padding: 30px;
+            max-width: 360px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid #3b82f6;
+        }
+
+        .modal-title {
+            color: #3b82f6;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .wallet-address {
+            background: #0b0e1a;
+            border-radius: 20px;
+            padding: 16px;
+            font-size: 14px;
+            color: #3b82f6;
+            word-break: break-all;
+            margin-bottom: 15px;
+            border: 1px solid #3b82f6;
+            font-family: monospace;
+        }
+
+        .copy-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            padding: 14px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .support-link {
+            color: #8e9bb3;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .support-link a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: 1px solid #5f6b84;
+            color: #8e9bb3;
+            border-radius: 40px;
+            padding: 12px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .admin-panel {
+            background: #1e1a2a;
+            border: 1px solid #ef4444;
+            border-radius: 24px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .admin-panel.show {
+            display: block;
+        }
+
+        .admin-title {
+            color: #ef4444;
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .admin-input-group {
+            margin-bottom: 15px;
+        }
+
+        .admin-label {
+            color: #8e9bb3;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .admin-input {
+            width: 100%;
+            background: #262d3c;
+            border: 1px solid #ef4444;
+            border-radius: 30px;
+            padding: 14px 16px;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .admin-btn {
+            padding: 14px;
+            border: 1px solid #ef4444;
+            border-radius: 30px;
+            background: transparent;
+            color: #ef4444;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .admin-btn.primary {
+            background: #ef4444;
+            color: white;
+            border: none;
+        }
+
+        .admin-btn.green {
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+
+        .promo {
+            background: #1a1e2a;
+            border-radius: 30px;
+            padding: 6px 6px 6px 16px;
+            display: flex;
+            margin-bottom: 20px;
+            border: 1px solid #262d3c;
+        }
+
+        .promo input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .promo input::placeholder {
+            color: #5f6b84;
+        }
+
+        .promo button {
+            background: #3b82f6;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .bets-panel {
+            background: #1a1e2a;
+            border-radius: 24px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .bets-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            color: #5f6b84;
+            font-size: 12px;
+            padding: 0 4px 8px 4px;
+            border-bottom: 1px solid #262d3c;
+        }
+
+        .bet-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            align-items: center;
+            padding: 10px 4px;
+            border-bottom: 1px solid #262d3c;
+            font-size: 14px;
+            color: #f0f4ff;
+        }
+
+        .bet-row:last-child {
+            border: none;
+        }
+
+        .bet-row.you {
+            background: #262d3c;
+            border-radius: 12px;
+            margin: 6px 0;
+            padding: 10px 8px;
+        }
+
+        .game {
+            background: #1e2330;
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .rocket {
+            font-size: 80px;
+            margin: 10px 0;
+            transition: transform 0.1s;
+        }
+
+        .multiplier {
+            font-size: 56px;
+            font-weight: 700;
+            color: white;
+            margin: 15px 0 5px;
+            letter-spacing: -1px;
+        }
+
+        .status {
+            color: #5f6b84;
+            font-size: 14px;
+            min-height: 24px;
+            margin-bottom: 20px;
+        }
+
+        .timer {
+            color: #3b82f6;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .bet-field {
+            display: flex;
+            align-items: center;
+            background: #262d3c;
+            border-radius: 40px;
+            margin-bottom: 16px;
+        }
+
+        .bet-field input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 16px;
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+            outline: none;
+            text-align: center;
+        }
+
+        .bet-field input:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .bet-field span {
+            padding-right: 20px;
+            color: #5f6b84;
+            font-weight: 500;
+        }
+
+        .action {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 40px;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .action:active {
+            opacity: 0.8;
+        }
+
+        .start {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .start:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .cashout {
+            background: #22c55e;
+            color: white;
+            display: none;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e2330;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            z-index: 3000;
+            display: none;
+            border: 1px solid #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="toast" id="toast"></div>
+
+    <!-- МОДАЛЬНОЕ ОКНО С КОШЕЛЬКОМ -->
+    <div class="modal" id="depositModal">
+        <div class="modal-content">
+            <div class="modal-title">💰 ПОПОЛНЕНИЕ</div>
+            <div class="wallet-address" id="walletAddress">UQCHds7zJ_3SHZfineeyPoem83eKy48MbvdW2Ok1tTNSECUp</div>
+            <button class="copy-btn" id="copyAddressBtn">📋 СКОПИРОВАТЬ АДРЕС</button>
+            <div class="support-link">
+                После перевода напиши <a href="https://t.me/Zent0x" target="_blank">@Zent0x</a> с указанием твоего ID
+            </div>
+            <button class="close-btn" id="closeModalBtn">ЗАКРЫТЬ</button>
+        </div>
+    </div>
+
+    <div class="app">
+        <div class="header">
+            <div class="logo"><span>🚀</span> ZVORNIXUP</div>
+            <div class="profile">
+                <div class="avatar" id="userAvatar">👤</div>
+                <span class="username" id="userName">Загрузка...</span>
+                <span class="user-id" id="userTelegramId"></span>
+            </div>
+        </div>
+
+        <div class="balance-card">
+            <div class="balance-row">
+                <span class="balance-label">💰 Твой баланс</span>
+                <span class="balance-number" id="realBalance">0.10 <small>TON</small></span>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-btn deposit-btn" id="depositBtn">💰 Пополнить</button>
+                <button class="action-btn withdraw-btn" id="withdrawBtn" disabled>💸 Вывести</button>
+            </div>
+        </div>
+
+        <div class="promo">
+            <input type="text" id="promoInput" placeholder="Промокод">
+            <button id="promoBtn">Активировать</button>
+        </div>
+
+        <div class="bets-panel">
+            <div class="bets-header">
+                <span>Игрок</span>
+                <span>Ставка</span>
+                <span>Краш</span>
+            </div>
+            <div id="betsList">
+                <div class="bet-row you">
+                    <span>Вы</span>
+                    <span>—</span>
+                    <span>—</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="game">
+            <div class="rocket" id="rocket">🚀</div>
+            <div class="multiplier" id="multiplier">1.00x</div>
+            <div class="status" id="status"></div>
+            <div class="timer" id="timer"></div>
+
+            <div class="bet-field">
+                <input type="number" id="betAmount" min="0.1" step="0.1" value="0.1">
+                <span>TON</span>
+            </div>
+
+            <button class="action start" id="startBtn" disabled>🚀 Запуск</button>
+            <button class="action cashout" id="cashoutBtn">💰 Забрать <span id="cashoutAmount">0.00</span> TON</button>
+        </div>
+
+        <!-- АДМИН ПАНЕЛЬ -->
+        <div class="admin-panel" id="adminPanel">
+            <div class="admin-title">⚡ РУЧНОЕ ПОПОЛНЕНИЕ</div>
+            
+            <div class="admin-input-group">
+                <div class="admin-label">🆔 Telegram ID игрока</div>
+                <input type="text" class="admin-input" id="adminUserId" placeholder="Например: 123456789">
+            </div>
+            
+            <div class="admin-input-group">
+                <div class="admin-label">💰 Сумма пополнения (TON)</div>
+                <input type="number" class="admin-input" id="adminAmount" step="0.1" min="0.1" value="1.0">
+            </div>
+            
+            <div class="admin-grid">
+                <button class="admin-btn primary" id="adminAddBalanceBtn">💸 НАЧИСЛИТЬ</button>
+                <button class="admin-btn" id="adminResetGameBtn">🔄 Сброс игры</button>
+                <button class="admin-btn green" id="adminCrashGameBtn">💥 Взорвать</button>
+                <button class="admin-btn" id="adminClearBtn">🗑️ Очистить</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== ТВОИ ДАННЫЕ =====
+        const YOUR_WALLET = "UQCHds7zJ_3SHZfineeyPoem83eKy48MbvdW2Ok1tTNSECUp";
+        const YOUR_NICKNAME = "@Zent0x";
+        const ADMIN_CODE = "AdminMenu8124238";
+        
+        // ===== КОНСТАНТЫ =====
+        const ROCKET_SPEED = 0.19;
+        const COOLDOWN_SECONDS = 5;
+        const MIN_WITHDRAW = 5;
+        const START_BONUS = 0.10; // Стартовый бонус 0.1 TON
+
+        // ===== ПЕРЕМЕННЫЕ =====
+        let gameTimer = null;
+        let cooldownTimer = null;
+        let isRocketFlying = false;
+        let isBettingPhase = false;
+        let isAdmin = false;
+        let balance = START_BONUS;
+        let players = [];
+        
+        let currentGame = null;
+        let demoProgress = 0;
+        let demoCrash = getCrash();
+
+        // ===== Telegram =====
+        const tg = window.Telegram?.WebApp;
+        const user = tg?.initDataUnsafe?.user;
+        const userName = user?.username ? '@' + user.username : (user?.first_name || 'Игрок');
+        const telegramId = user?.id || 'неизвестно';
+
+        // ===== ЭЛЕМЕНТЫ =====
+        const $ = {
+            userAvatar: document.getElementById('userAvatar'),
+            userName: document.getElementById('userName'),
+            userTelegramId: document.getElementById('userTelegramId'),
+            realBalance: document.getElementById('realBalance'),
+            rocket: document.getElementById('rocket'),
+            multiplier: document.getElementById('multiplier'),
+            status: document.getElementById('status'),
+            timer: document.getElementById('timer'),
+            betAmount: document.getElementById('betAmount'),
+            startBtn: document.getElementById('startBtn'),
+            cashoutBtn: document.getElementById('cashoutBtn'),
+            cashoutAmount: document.getElementById('cashoutAmount'),
+            depositBtn: document.getElementById('depositBtn'),
+            withdrawBtn: document.getElementById('withdrawBtn'),
+            promoInput: document.getElementById('promoInput'),
+            promoBtn: document.getElementById('promoBtn'),
+            adminPanel: document.getElementById('adminPanel'),
+            adminUserId: document.getElementById('adminUserId'),
+            adminAmount: document.getElementById('adminAmount'),
+            adminAddBalanceBtn: document.getElementById('adminAddBalanceBtn'),
+            adminResetGameBtn: document.getElementById('adminResetGameBtn'),
+            adminCrashGameBtn: document.getElementById('adminCrashGameBtn'),
+            adminClearBtn: document.getElementById('adminClearBtn'),
+            betsList: document.getElementById('betsList'),
+            toast: document.getElementById('toast'),
+            depositModal: document.getElementById('depositModal'),
+            walletAddress: document.getElementById('walletAddress'),
+            copyAddressBtn: document.getElementById('copyAddressBtn'),
+            closeModalBtn: document.getElementById('closeModalBtn')
+        };
+
+        // ===== ИНИЦИАЛИЗАЦИЯ =====
+        window.onload = () => {
+            $.userName.innerText = userName;
+            $.userAvatar.innerText = userName.charAt(0).toUpperCase();
+            $.userTelegramId.innerText = telegramId;
+            $.walletAddress.innerText = YOUR_WALLET;
+            
+            loadBalance();
+            updateBalance();
+            checkWithdrawButton();
+            
+            // Приветственное сообщение
+            showToast(`✨ Добро пожаловать! +${START_BONUS} TON на баланс`);
+            
+            startBettingPhase();
+        };
+
+        // ===== СОХРАНЕНИЕ БАЛАНСА =====
+        function saveBalance() {
+            localStorage.setItem('userBalance', balance.toString());
+        }
+
+        function loadBalance() {
+            const saved = localStorage.getItem('userBalance');
+            if (saved) {
+                balance = parseFloat(saved);
+            } else {
+                balance = START_BONUS;
+                saveBalance();
+            }
+        }
+
+        // ===== МОДАЛЬНОЕ ОКНО ПОПОЛНЕНИЯ =====
+        $.depositBtn.onclick = () => {
+            $.depositModal.classList.add('show');
+        };
+
+        $.closeModalBtn.onclick = () => {
+            $.depositModal.classList.remove('show');
+        };
+
+        $.copyAddressBtn.onclick = () => {
+            navigator.clipboard.writeText(YOUR_WALLET).then(() => {
+                showToast('✅ Адрес скопирован!');
+            });
+        };
+
+        // ===== ВЫВОД =====
+        $.withdrawBtn.onclick = () => {
+            showToast(`📞 Напиши ${YOUR_NICKNAME} для вывода (мин. 5 TON)`);
+        };
+
+        // ===== ПРОВЕРКА КНОПКИ ВЫВОДА =====
+        function checkWithdrawButton() {
+            $.withdrawBtn.disabled = balance < MIN_WITHDRAW;
+        }
+
+        // ===== ПРОМОКОДЫ =====
+        $.promoBtn.onclick = () => {
+            const code = $.promoInput.value.trim();
+            if (!code) return;
+
+            // Админ-код
+            if (code === ADMIN_CODE && !isAdmin) {
+                isAdmin = true;
+                $.adminPanel.classList.add('show');
+                showToast('✅ Админ-панель активирована');
+                setupAdminControls();
+            } 
+            // Обычные промокоды
+            else if (code === 'WELCOME') {
+                balance = Number((balance + 0.5).toFixed(4));
+                updateBalance();
+                showToast('✅ +0.5 TON');
+            } else if (code === 'TON100') {
+                balance = Number((balance + 0.1).toFixed(4));
+                updateBalance();
+                showToast('✅ +0.1 TON');
+            } else {
+                showToast('❌ Неверный код');
+            }
+            $.promoInput.value = '';
+        };
+
+        // ===== АДМИН ФУНКЦИИ =====
+        function setupAdminControls() {
+            $.adminAddBalanceBtn.onclick = () => {
+                const targetId = $.adminUserId.value.trim();
+                const amount = parseFloat($.adminAmount.value);
+                
+                if (!targetId || isNaN(amount) || amount <= 0) {
+                    showToast('❌ Заполни поля');
+                    return;
+                }
+                
+                if (targetId === telegramId.toString()) {
+                    balance = Number((balance + amount).toFixed(4));
+                    updateBalance();
+                    showToast(`💰 Начислено ${amount} TON`);
+                } else {
+                    showToast(`✅ Игроку ${targetId} начислено ${amount} TON`);
+                }
+                
+                $.adminUserId.value = '';
+                $.adminAmount.value = '1.0';
+            };
+            
+            $.adminResetGameBtn.onclick = forceReset;
+            
+            $.adminCrashGameBtn.onclick = () => {
+                if (currentGame?.active) {
+                    explode(true);
+                    showToast('💥 Ракета взорвана');
+                }
+            };
+            
+            $.adminClearBtn.onclick = () => {
+                $.adminUserId.value = '';
+                $.adminAmount.value = '1.0';
+            };
+        }
+
+        // ===== ФАЗА ПРИЁМА СТАВОК =====
+        function startBettingPhase() {
+            isBettingPhase = true;
+            isRocketFlying = false;
+            
+            $.betAmount.disabled = false;
+            $.startBtn.disabled = false;
+            $.startBtn.innerText = '🚀 Запуск';
+            
+            let secondsLeft = COOLDOWN_SECONDS;
+            $.timer.innerText = `⏳ Ставки принимаются: ${secondsLeft}с`;
+            
+            if (cooldownTimer) clearInterval(cooldownTimer);
+            
+            cooldownTimer = setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft > 0) {
+                    $.timer.innerText = `⏳ Ставки принимаются: ${secondsLeft}с`;
+                } else {
+                    clearInterval(cooldownTimer);
+                    cooldownTimer = null;
+                    isBettingPhase = false;
+                    $.betAmount.disabled = true;
+                    $.startBtn.disabled = true;
+                    $.timer.innerText = '';
+                    startRocketFlight();
+                }
+            }, 1000);
+        }
+
+        // ===== ПОЛЁТ РАКЕТЫ =====
+        function startRocketFlight() {
+            isRocketFlying = true;
+            demoProgress = 0;
+            demoCrash = getCrash();
+            $.rocket.innerText = '🚀';
+        }
+
+        // ===== ГЛАВНЫЙ ИГРОВОЙ ЦИКЛ =====
+        setInterval(() => {
+            if (!isRocketFlying) return;
+
+            demoProgress += 0.016;
+            let mult = 1.0 + (demoProgress * ROCKET_SPEED);
+            
+            if (currentGame?.active) {
+                currentGame.mult = mult;
+                $.multiplier.innerText = mult.toFixed(2) + 'x';
+                $.cashoutAmount.innerText = (currentGame.bet * mult).toFixed(2);
+                
+                if (mult >= currentGame.crash) explode(false);
+            } else {
+                $.multiplier.innerText = mult.toFixed(2) + 'x';
+                
+                if (mult >= demoCrash) {
+                    $.rocket.innerText = '💥';
+                    setTimeout(() => $.rocket.innerText = '🚀', 1000);
+                    isRocketFlying = false;
+                    startBettingPhase();
+                }
+            }
+        }, 16);
+
+        // ===== ОБНОВЛЕНИЕ БАЛАНСА =====
+        function updateBalance() {
+            $.realBalance.innerText = balance.toFixed(2);
+            checkWithdrawButton();
+            saveBalance();
+        }
+
+        // ===== ТОСТ =====
+        function showToast(msg) {
+            $.toast.innerText = msg;
+            $.toast.style.display = 'block';
+            setTimeout(() => $.toast.style.display = 'none', 2000);
+        }
+
+        // ===== СТАРТ =====
+        $.startBtn.onclick = () => {
+            if (!isBettingPhase) {
+                showToast('❌ Сейчас нельзя сделать ставку');
+                return;
+            }
+
+            const bet = parseFloat($.betAmount.value);
+            if (bet < 0.1) {
+                showToast('❌ Минимум 0.1 TON');
+                return;
+            }
+
+            if (balance < bet) {
+                showToast('❌ Недостаточно TON');
+                return;
+            }
+
+            balance = Number((balance - bet).toFixed(4));
+            updateBalance();
+            
+            currentGame = {
+                bet, 
+                mult: 1.0, 
+                active: true,
+                crash: getCrash(), 
+                cashed: false
+            };
+
+            players = [{ name: 'Вы', bet, win: '-' }];
+            renderBets();
+
+            $.startBtn.style.display = 'none';
+            $.cashoutBtn.style.display = 'block';
+            $.cashoutAmount.innerText = bet.toFixed(2);
+        };
+
+        // ===== ЗАБРАТЬ =====
+        $.cashoutBtn.onclick = () => {
+            if (!currentGame?.active || currentGame.cashed) return;
+
+            const win = Number((currentGame.bet * currentGame.mult).toFixed(4));
+            balance = Number((balance + win).toFixed(4));
+            updateBalance();
+            
+            $.status.innerText = `🎉 +${win.toFixed(2)} TON`;
+            $.status.style.color = '#22c55e';
+
+            players = players.map(p => p.name === 'Вы' ? { ...p, win: win.toFixed(2) } : p);
+            renderBets();
+
+            currentGame.cashed = true;
+            currentGame.active = false;
+
+            $.cashoutBtn.style.display = 'none';
+            $.startBtn.style.display = 'block';
+        };
+
+        // ===== ВЗРЫВ =====
+        function explode() {
+            if (!currentGame?.active) return;
+
+            $.rocket.innerText = '💥';
+            
+            if (!currentGame.cashed) {
+                $.status.innerText = `💥 Проигрыш ${currentGame.bet.toFixed(2)} TON`;
+                $.status.style.color = '#ef4444';
+                players = players.map(p => p.name === 'Вы' ? { ...p, win: '💥' } : p);
+                renderBets();
+            }
+
+            currentGame.active = false;
+            $.cashoutBtn.style.display = 'none';
+            $.startBtn.style.display = 'block';
+            
+            isRocketFlying = false;
+            startBettingPhase();
+        }
+
+        // ===== ГЕНЕРАЦИЯ КРАША =====
+        function getCrash() {
+            const r = Math.random();
+            if (r < 0.60) return 1.01 + Math.random() * 0.19;
+            if (r < 0.85) return 1.20 + Math.random() * 0.30;
+            if (r < 0.95) return 1.50 + Math.random() * 0.50;
+            return 2.00 + Math.random() * 3.00;
+        }
+
+        // ===== ПРИНУДИТЕЛЬНЫЙ СБРОС =====
+        function forceReset() {
+            if (gameTimer) clearInterval(gameTimer);
+            currentGame = null;
+            isRocketFlying = false;
+            $.rocket.innerText = '🚀';
+            $.multiplier.innerText = '1.00x';
+            $.status.innerText = '';
+            $.startBtn.style.display = 'block';
+            $.cashoutBtn.style.display = 'none';
+            startBettingPhase();
+        }
+
+        // ===== ОТРИСОВКА ТАБЛИЦЫ =====
+        function renderBets() {
+            if (players.length === 0) {
+                $.betsList.innerHTML = `<div class="bet-row you"><span>Вы</span><span>—</span><span>—</span></div>`;
+                return;
+            }
+            let html = '';
+            players.forEach(p => {
+                html += `<div class="bet-row you"><span>${p.name}</span><span>${p.bet} TON</span><span>${p.win}</span></div>`;
+            });
+            $.betsList.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
